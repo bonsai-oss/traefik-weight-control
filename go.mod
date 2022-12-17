@@ -1,4 +1,4 @@
-module traefik-weight-control
+module github.com/bonsai-oss/traefik-weight-control
 
 go 1.19
 

@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"gopkg.in/alecthomas/kingpin.v2"
 
-	"traefik-weight-control/internal/util"
+	"github.com/bonsai-oss/traefik-weight-control/internal/util"
 )
 
 type parameters struct {
