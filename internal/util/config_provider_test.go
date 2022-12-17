@@ -19,7 +19,7 @@ func TestSelectProvider(t *testing.T) {
 		configFile := &ConfigFile{FileName: "test.yaml"}
 
 		// Call the selectProvider function
-		decoder, encoder, err := configFile.selectProvider(fileHandle)
+		decoder, encoder, err := configFile.SelectProvider(fileHandle)
 
 		// Assert that no error is returned
 		assert.Nil(t, err)
@@ -37,7 +37,7 @@ func TestSelectProvider(t *testing.T) {
 		configFile := &ConfigFile{FileName: "test.json"}
 
 		// Call the selectProvider function
-		decoder, encoder, err := configFile.selectProvider(fileHandle)
+		decoder, encoder, err := configFile.SelectProvider(fileHandle)
 
 		// Assert that no error is returned
 		assert.Nil(t, err)
@@ -55,7 +55,7 @@ func TestSelectProvider(t *testing.T) {
 		configFile := &ConfigFile{FileName: "test.csv"}
 
 		// Call the selectProvider function
-		decoder, encoder, err := configFile.selectProvider(fileHandle)
+		decoder, encoder, err := configFile.SelectProvider(fileHandle)
 
 		// Assert that an error is returned
 		assert.NotNil(t, err)

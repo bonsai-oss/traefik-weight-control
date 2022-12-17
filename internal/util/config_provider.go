@@ -24,7 +24,7 @@ type ConfigFile struct {
 	FileName string
 }
 
-func (c *ConfigFile) selectProvider(fileHandle io.ReadWriter) (Decoder, Encoder, error) {
+func (c *ConfigFile) SelectProvider(fileHandle io.ReadWriter) (Decoder, Encoder, error) {
 	switch path.Ext(c.FileName) {
 	case ".yaml", ".yml":
 		return yaml.NewDecoder(fileHandle), yaml.NewEncoder(fileHandle), nil
@@ -36,13 +36,13 @@ func (c *ConfigFile) selectProvider(fileHandle io.ReadWriter) (Decoder, Encoder,
 }
 
 func (c *ConfigFile) Read() (*dynamic.Configuration, error) {
-	fh, osOpenError := os.OpenFile(c.FileName, os.O_RDONLY|os.O_CREATE, 0644)
+	fh, osOpenError := os.OpenFile(c.FileName, os.O_RDONLY, 0644)
 	if osOpenError != nil {
 		return nil, osOpenError
 	}
 	defer func() { fh.Close() }()
 
-	decoder, _, providerError := c.selectProvider(fh)
+	decoder, _, providerError := c.SelectProvider(fh)
 	if providerError != nil {
 		return nil, providerError
 	}
@@ -64,7 +64,7 @@ func (c *ConfigFile) Write(config *dynamic.Configuration) error {
 	}
 	defer func() { fh.Close() }()
 
-	_, encoder, providerError := c.selectProvider(fh)
+	_, encoder, providerError := c.SelectProvider(fh)
 	if providerError != nil {
 		return providerError
 	}
