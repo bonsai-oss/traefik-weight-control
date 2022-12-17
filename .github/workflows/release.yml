@@ -1,0 +1,94 @@
+---
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.version.outputs.package_version }}
+    steps:
+      - name: filter version variable
+        id: version
+        run: |
+          export VERSION="$(echo ${{github.ref_name}} | sed 's/^v//')"
+          echo "::set-output name=package_version::$VERSION"
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.package_version }}
+          release_name: Release ${{ steps.version.outputs.package_version }}
+          draft: false
+          prerelease: false
+
+  go_build:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.fsrv.services/fsrvcorp/container/debian-build:latest
+    needs: [create_release]
+    env:
+      CGO_ENABLED: 0
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
+    strategy:
+      matrix:
+        goos: [linux, darwin, freebsd]
+        goarch: [amd64, arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: go build -o traefik-weight-control -ldflags="-s -w" -trimpath ./cmd/traefik-weight-control
+      - run: cp example/traefik-weight-control.json .
+      - run: tar -czf traefik-weight-control_${{ needs.create_release.outputs.version }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz traefik-weight-control LICENSE traefik-weight-control.json
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./traefik-weight-control_${{ needs.create_release.outputs.version }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz
+          asset_name: traefik-weight-control_${{ needs.create_release.outputs.version }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz
+          asset_content_type: application/gzip
+
+  deb_packages:
+    container:
+      image: registry.fsrv.services/fsrvcorp/container/debian-build:latest
+    runs-on: ubuntu-latest
+    needs: [create_release]
+    env:
+      CGO_ENABLED: 0
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
+    strategy:
+      matrix:
+        goos: [linux]
+        goarch: [amd64, arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: apt update && apt install -y binutils-aarch64-linux-gnu
+      - run: go build -o traefik-weight-control -ldflags="-s -w" -trimpath ./cmd/traefik-weight-control
+      - name: replace template variables
+        run: |
+          export VERSION=${{ needs.create_release.outputs.version }}
+          sed -i "s/%VERSION%/$VERSION/g" debian/changelog
+          sed -i "s/%ARCHITECTURE%/$GOARCH/g" debian/control
+      - run: mkdir package && mv debian package
+      - run: (cd package && dpkg-buildpackage -rfakeroot -b -uc -us --host-arch $GOARCH)
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create_release.outputs.upload_url }}
+          asset_path: ./traefik-weight-control_${{ needs.create_release.outputs.version }}_${{ matrix.goarch }}.deb
+          asset_name: traefik-weight-control_${{ needs.create_release.outputs.version }}_${{ matrix.goarch }}.deb
+          asset_content_type: application/octet-stream

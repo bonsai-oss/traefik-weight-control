@@ -1,0 +1,5 @@
+traefik-weight-control (%VERSION%) stable; urgency=medium
+
+  * Initial Package.
+
+ -- Florian Bauer <florian@fsrv.xyz>  Sat, 17 Dec 2022 00:00:00 +0000

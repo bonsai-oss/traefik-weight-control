@@ -1,0 +1,14 @@
+Source: traefik-weight-control
+Priority: optional
+Maintainer: Florian Bauer <florian@fsrv.xyz>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.5.1
+Homepage: https://github.com/bonsai-oss/traefik-weight-control
+Vcs-Browser: https://github.com/bonsai-oss/traefik-weight-control
+Vcs-Git: https://github.com/bonsai-oss/traefik-weight-control.git
+Rules-Requires-Root: yes
+
+Package: traefik-weight-control
+Architecture: %ARCHITECTURE%
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description:  cli tool adjusting the weight of weighted round robin Traefik http services
