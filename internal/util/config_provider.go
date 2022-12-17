@@ -3,6 +3,7 @@ package util
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path"
 
@@ -20,44 +21,31 @@ type Encoder interface {
 }
 
 type ConfigFile struct {
-	FileName   string
-	fileHandle *os.File
+	FileName string
 }
 
-func (c *ConfigFile) selectProvider(strict bool) (Decoder, Encoder, error) {
-	fh, osOpenError := os.OpenFile(c.FileName, os.O_RDWR|os.O_CREATE, 0644)
-
-	if osOpenError != nil {
-		return nil, nil, osOpenError
-	}
-	c.fileHandle = fh
-
+func (c *ConfigFile) selectProvider(fileHandle io.ReadWriter) (Decoder, Encoder, error) {
 	switch path.Ext(c.FileName) {
 	case ".yaml", ".yml":
-		dec := yaml.NewDecoder(c.fileHandle)
-		if strict {
-			dec.KnownFields(true)
-		}
-		return dec, yaml.NewEncoder(c.fileHandle), nil
+		return yaml.NewDecoder(fileHandle), yaml.NewEncoder(fileHandle), nil
 	case ".json":
-		dec := json.NewDecoder(c.fileHandle)
-		if strict {
-			dec.DisallowUnknownFields()
-		}
-		return dec, json.NewEncoder(c.fileHandle), nil
+		return json.NewDecoder(fileHandle), json.NewEncoder(fileHandle), nil
 	}
 
 	return nil, nil, fmt.Errorf("unsupported file extension")
 }
 
 func (c *ConfigFile) Read() (*dynamic.Configuration, error) {
-	decoder, _, providerError := c.selectProvider(false)
+	fh, osOpenError := os.OpenFile(c.FileName, os.O_RDONLY|os.O_CREATE, 0644)
+	if osOpenError != nil {
+		return nil, osOpenError
+	}
+	defer func() { fh.Close() }()
+
+	decoder, _, providerError := c.selectProvider(fh)
 	if providerError != nil {
 		return nil, providerError
 	}
-	defer func() {
-		c.fileHandle.Close()
-	}()
 
 	log.Debug().
 		Str("file", c.FileName).
@@ -70,13 +58,16 @@ func (c *ConfigFile) Read() (*dynamic.Configuration, error) {
 }
 
 func (c *ConfigFile) Write(config *dynamic.Configuration) error {
-	_, encoder, providerError := c.selectProvider(false)
+	fh, osOpenError := os.OpenFile(c.FileName, os.O_WRONLY|os.O_CREATE, 0644)
+	if osOpenError != nil {
+		return osOpenError
+	}
+	defer func() { fh.Close() }()
+
+	_, encoder, providerError := c.selectProvider(fh)
 	if providerError != nil {
 		return providerError
 	}
-	defer func() {
-		c.fileHandle.Close()
-	}()
 
 	log.Debug().
 		Str("file", c.FileName).
