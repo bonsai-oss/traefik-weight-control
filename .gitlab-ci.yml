@@ -80,7 +80,7 @@ debian packagebuild:
         GOARCH: [amd64, arm64]
   before_script:
     - apt update && apt install -y binutils-aarch64-linux-gnu
-    - go build -o traefik-weight-control -ldflags="-s -w -X main.version=${CI_COMMIT_TAG}" -trimpath ./cmd/traefik-weight-control
+    - go build -o aectl -ldflags="-s -w -X main.version=${CI_COMMIT_TAG}" -trimpath ./cmd/aectl
   script:
     - export VERSION="$(echo $CI_COMMIT_TAG | sed 's/^v//')"
     - sed -i "s/%VERSION%/$VERSION/g" debian/changelog
