@@ -20,10 +20,12 @@ type Encoder interface {
 	Encode(interface{}) error
 }
 
+// ConfigFile represents a Traefik configuration file
 type ConfigFile struct {
 	FileName string
 }
 
+// SelectProvider selects the appropriate provider based on the file extension
 func (c *ConfigFile) SelectProvider(fileHandle io.ReadWriter) (Decoder, Encoder, error) {
 	switch path.Ext(c.FileName) {
 	case ".yaml", ".yml":
@@ -35,6 +37,7 @@ func (c *ConfigFile) SelectProvider(fileHandle io.ReadWriter) (Decoder, Encoder,
 	return nil, nil, fmt.Errorf("unsupported file extension")
 }
 
+// Read reads the configuration file and returns dynamic.Configuration
 func (c *ConfigFile) Read() (*dynamic.Configuration, error) {
 	fh, osOpenError := os.OpenFile(c.FileName, os.O_RDONLY, 0644)
 	if osOpenError != nil {
@@ -57,6 +60,7 @@ func (c *ConfigFile) Read() (*dynamic.Configuration, error) {
 	return &config, decodeError
 }
 
+// Write writes the dynamic.Configuration to the configuration file
 func (c *ConfigFile) Write(config *dynamic.Configuration) error {
 	fh, osOpenError := os.OpenFile(c.FileName, os.O_WRONLY|os.O_CREATE, 0644)
 	if osOpenError != nil {

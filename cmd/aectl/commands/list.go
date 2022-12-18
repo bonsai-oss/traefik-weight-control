@@ -60,6 +60,7 @@ func (lsc *ListCommand) Execute(ctx *kingpin.ParseContext) error {
 			}
 		}
 	default:
+		// reuse the configuration_provider code to get the output encoder for the selected format
 		_, encoder, _ := (&util.ConfigFile{FileName: "test." + lsc.Format}).SelectProvider(os.Stdout)
 		encoder.Encode(output)
 	}

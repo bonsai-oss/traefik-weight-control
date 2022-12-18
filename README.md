@@ -1,8 +1,12 @@
 ### traefik-weight-control
 
+![](https://gitlab.com/bonsai-oss/tools/traefik-weight-control/badges/main/pipeline.svg)
+![](https://gitlab.com/bonsai-oss/tools/traefik-weight-control/badges/main/coverage.svg)
+
 *A cli tool adjusting and listing the weight of weighted round robin Traefik services.*
 
 #### Usage
+
 ```
 usage: aectl --file=FILE [<flags>] <command> [<args> ...]
 
