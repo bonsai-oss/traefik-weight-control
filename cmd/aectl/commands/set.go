@@ -1,10 +1,12 @@
 package commands
 
 import (
-	"github.com/bonsai-oss/traefik-weight-control/internal/util"
+	"os"
+
 	"github.com/rs/zerolog/log"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"os"
+
+	"github.com/bonsai-oss/traefik-weight-control/internal/util"
 )
 
 type SetCommand struct {

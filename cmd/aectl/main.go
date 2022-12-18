@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"os"
 
 	"github.com/bonsai-oss/traefik-weight-control/cmd/aectl/commands"
 )
@@ -14,9 +15,11 @@ type parameters struct {
 	debug bool
 }
 
+// version is the version of the binary. It is set at build time using the -ldflags -X option.
 var version = "dev"
 
 func main() {
+	// Setup logging
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
@@ -40,8 +43,10 @@ func main() {
 	app.Flag("verbose", "Enable debug mode").Short('v').BoolVar(&params.debug)
 	app.Flag("file", "Path to the Traefik configuration file").Short('f').Required().StringVar(&params.file)
 	app.PreAction(func(ctx *kingpin.ParseContext) error {
+		// apply global `file` option
 		listCommand.File = params.file
 		setCommand.File = params.file
+
 		if params.debug {
 			zerolog.SetGlobalLevel(zerolog.DebugLevel)
 		}
