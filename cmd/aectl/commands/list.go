@@ -25,8 +25,8 @@ type ListCommand struct {
 	Format string
 }
 
-func (lsc *ListCommand) Execute(ctx *kingpin.ParseContext) error {
-	configFile := util.ConfigFile{FileName: lsc.File}
+func (listCommand *ListCommand) Execute(ctx *kingpin.ParseContext) error {
+	configFile := util.ConfigFile{FileName: listCommand.File}
 	traefikConfiguration, providerError := configFile.Read()
 	if providerError != nil {
 		log.Err(providerError).Msg("Failed to read configuration file")
@@ -51,7 +51,7 @@ func (lsc *ListCommand) Execute(ctx *kingpin.ParseContext) error {
 		output = append(output, outputFormat{Service: serviceName, Servers: servers})
 	}
 
-	switch lsc.Format {
+	switch listCommand.Format {
 	case "text":
 		for _, o := range output {
 			fmt.Println(o.Service)
@@ -61,7 +61,7 @@ func (lsc *ListCommand) Execute(ctx *kingpin.ParseContext) error {
 		}
 	default:
 		// reuse the configuration_provider code to get the output encoder for the selected format
-		_, encoder, _ := (&util.ConfigFile{FileName: "test." + lsc.Format}).SelectProvider(os.Stdout)
+		_, encoder, _ := (&util.ConfigFile{FileName: "test." + listCommand.Format}).SelectProvider(os.Stdout)
 		encoder.Encode(output)
 	}
 
