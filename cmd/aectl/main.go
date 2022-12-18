@@ -34,9 +34,10 @@ func main() {
 	kpListCommand.Flag("format", "Output format").Short('o').Default("text").EnumVar(&listCommand.Format, "text", "json", "yaml", "yml")
 
 	setCommand := &commands.SetCommand{}
-	kpSetCommand := app.Command("set", "Set the weight of a server").Action(setCommand.Execute)
-	kpSetCommand.Flag("dry-run", "Dry run").Short('d').BoolVar(&setCommand.DryRun)
-	kpSetCommand.Flag("service", "Service name").Short('s').Required().StringVar(&setCommand.Service)
+	kpSetCommand := app.Command("set", "Set the weight of a server").PreAction(setCommand.ValidateParameters).Action(setCommand.Execute)
+	kpSetCommand.Flag("dry-run", "Dry run").Short('d').BoolVar(&setCommand.DryRunMode)
+	kpSetCommand.Flag("global", "Set the weight for all services").Short('g').BoolVar(&setCommand.GlobalMode)
+	kpSetCommand.Flag("service", "Service name").Short('s').StringVar(&setCommand.Service)
 	kpSetCommand.Flag("server", "Server name").Short('n').Required().StringVar(&setCommand.Server)
 	kpSetCommand.Flag("weight", "Server weight").Short('w').Required().IntVar(&setCommand.Weight)
 

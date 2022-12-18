@@ -28,10 +28,11 @@ Commands:
 
     -o, --format=text  Output format
 
-  set --service=SERVICE --server=SERVER --weight=WEIGHT [<flags>]
+  set --server=SERVER --weight=WEIGHT [<flags>]
     Set the weight of a server
 
     -d, --dry-run          Dry run
+    -g, --global           Set the weight for all services
     -s, --service=SERVICE  Service name
     -n, --server=SERVER    Server name
     -w, --weight=WEIGHT    Server weight
