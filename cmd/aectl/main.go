@@ -31,7 +31,7 @@ func main() {
 
 	listCommand := &commands.ListCommand{}
 	kpListCommand := app.Command("list", "List all services and servers").Action(listCommand.Execute)
-	kpListCommand.Flag("format", "Output format").Short('o').Default("text").EnumVar(&listCommand.Format, "text", "json", "yaml", "yml")
+	kpListCommand.Flag("format", "Output format").Short('o').Envar("AECTL_OUTPUT_FORMAT").Default("text").EnumVar(&listCommand.Format, "text", "json", "yaml", "yml")
 
 	setCommand := &commands.SetCommand{}
 	kpSetCommand := app.Command("set", "Set the weight of a server").PreAction(setCommand.ValidateParameters).Action(setCommand.Execute)
@@ -42,7 +42,7 @@ func main() {
 	kpSetCommand.Flag("weight", "Server weight").Short('w').Required().IntVar(&setCommand.Weight)
 
 	app.Flag("verbose", "Enable debug mode").Short('v').BoolVar(&params.debug)
-	app.Flag("file", "Path to the Traefik configuration file").Short('f').Required().StringVar(&params.file)
+	app.Flag("file", "Path to the Traefik configuration file").Short('f').Envar("AECTL_FILE").Required().StringVar(&params.file)
 	app.PreAction(func(ctx *kingpin.ParseContext) error {
 		// apply global `file` option
 		listCommand.File = params.file
