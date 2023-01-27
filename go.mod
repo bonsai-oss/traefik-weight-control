@@ -3,7 +3,7 @@ module github.com/bonsai-oss/traefik-weight-control
 go 1.19
 
 require (
-	github.com/rs/zerolog v1.28.0
+	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.1
 	github.com/traefik/traefik/v2 v2.9.6
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
