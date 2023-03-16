@@ -4,8 +4,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/rs/zerolog/log"
-	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/bonsai-oss/traefik-weight-control/internal/util"
 )

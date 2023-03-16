@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/alecthomas/kingpin/v2"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/bonsai-oss/traefik-weight-control/cmd/aectl/commands"
 )
