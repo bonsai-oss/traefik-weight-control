@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/kingpin/v2 v2.3.2
 	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.2
-	github.com/traefik/traefik/v2 v2.9.9
+	github.com/traefik/traefik/v2 v2.9.10
 	gopkg.in/yaml.v3 v3.0.1
 )
 
