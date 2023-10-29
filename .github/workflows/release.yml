@@ -42,7 +42,7 @@ jobs:
         goarch: [ amd64, arm64 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: go build -o aectl -ldflags="-s -w -X main.version=${{ needs.create_release.outputs.version }}" -trimpath ./cmd/aectl
       - run: tar -czf traefik-weight-control_${{ needs.create_release.outputs.version }}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz aectl LICENSE
       - name: Upload Release Asset
@@ -71,7 +71,7 @@ jobs:
         goarch: [ amd64, arm64 ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: apt update && apt install -y binutils-aarch64-linux-gnu
       - run: go build -o aectl -ldflags="-s -w -X main.version=${{ needs.create_release.outputs.version }}" -trimpath ./cmd/aectl
       - name: replace template variables
