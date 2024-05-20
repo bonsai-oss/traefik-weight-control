@@ -2,7 +2,7 @@ module github.com/bonsai-oss/traefik-weight-control
 
 go 1.22
 
-toolchain go1.22.1
+toolchain go1.22.3
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
